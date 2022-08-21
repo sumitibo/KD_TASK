@@ -1,15 +1,5 @@
 [
   {
-    "id": 149849,
-    "name": "John Doe",
-    "email": "john.doe@example.com",
-    "avatar": "https://example.com/avatar.png",
-    "phone": "123-456-1234",
-    "active": true,
-    "cart_id": null,
-    "cart_active": false
-  },
-  {
     "id": 2893934,
     "name": "Sumit Doe",
     "email": "john.doe@example.com",
@@ -28,5 +18,15 @@
     "active": true,
     "cart_id": null,
     "cart_active": false
+  },
+  {
+    "id": 149849,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "avatar": "https://example.com/avatar.png",
+    "phone": "123-456-1234",
+    "active": true,
+    "cart_id": "21d46dab-e22b-47d2-81c9-cceca1324f9a",
+    "cart_active": true
   }
 ]

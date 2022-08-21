@@ -2,8 +2,13 @@ const cart_line = {
   type: "object",
   properties: {
     quantity: {
-      type: "integer",
-      minimum: 1,
+      type: "object",
+      properties: {
+        quantity_number: {
+          type: "integer",
+          minimum: 1,
+        },
+      },
     },
     offer_id: { type: "string" },
     unit_price: {
