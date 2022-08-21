@@ -5,7 +5,6 @@ function generateCart(req, reply) {
   try {
     let cartAll;
     fs.readFile(path.join(__dirname, "../data")+ "/cart.json","utf-8",(err, data)=>{
-
       if(err) throw new Error(err);
       else{
         cartAll = JSON.parse(data);
@@ -18,7 +17,7 @@ function generateCart(req, reply) {
 
     fs.readFile(path.join(__dirname, "../data")+ "/users.json","utf-8",(err, data)=>{
       if(err) {
-        console.log(err);
+        console.log(err,"Line no 21 se aa rha h");
       }else{
         let users = JSON.parse(data);
         //geting the user id to get the exact user from the list;
@@ -42,12 +41,12 @@ function generateCart(req, reply) {
             user_id:user_id,
           }
 
-          let data = JSON.stringify([...cartAll,cart], null, 2);
+          let newCarter = JSON.stringify([...cartAll,cart], null, 2);//merging all existing carts with new one cart;
 
           fs.writeFile(path.join(__dirname, "../data")+ "/cart.json",
-            data,
+          newCarter,
             (err) => {
-              if (err) throw err;
+              if (err) console.log("Line no 50 se aa rha h");
               else console.log("Data written to file");
             }
           );
@@ -66,7 +65,7 @@ function generateCart(req, reply) {
           fs.writeFile(path.join(__dirname, "../data")+ "/users.json",
           revisedUser,
             (err) => {
-              if (err) throw err;
+              if (err) console.log("line no 69 se aarha h");
               console.log("Data written to file");
             }
           );
@@ -75,22 +74,29 @@ function generateCart(req, reply) {
           replyer(cart)
 
         }else{
-                let user_cart = cartAll.filter((item)=>{
-                  return item.user_id === user_id
-                })
+          fs.readFile(path.join(__dirname, "../data")+ "/cart.json","utf-8",(err, data)=>{
 
-                user_cart = user_cart[0];
+            if(err) throw new Error(err);
+            else{
+              data = JSON.parse(data);
+              let user_cart = data.filter((item)=>{
+                return item.user_id === user_id
+              })
 
-                status= "Cart already active"
+              user_cart = user_cart[0];
 
-                replyer(user_cart)
-           
+              status= "Cart already active"
+
+              replyer(user_cart)
+            }
+          })          
         }
         
       }
     });
 
     function replyer(data){
+      console.log(data,"dekhe to zara")
       return reply.code(201).send({
       cart_id:data.cart_id,
       user_id:data.user_id,
