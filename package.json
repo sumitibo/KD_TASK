@@ -20,6 +20,8 @@
   "homepage": "https://github.com/sumitibo/KD_TASK#readme",
   "dependencies": {
     "fastify": "^4.5.2",
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.19",
+    "pino-pretty": "^9.0.1",
+    "uuid": "^8.3.2"
   }
 }

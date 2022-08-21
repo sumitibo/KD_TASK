@@ -1,14 +1,32 @@
-{
-    "users":[
-        {
-            "id":1,
-            "name":"John Doe",
-            "email":"john.doe@example.com",
-            "avatar":"https://example.com/avatar.png",
-            "phone":"123-456-1234",
-            "active":true,
-            "cart_id":null,
-            "cart_active":false
-        }
-    ]
-}
+[
+  {
+    "id": 149849,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "avatar": "https://example.com/avatar.png",
+    "phone": "123-456-1234",
+    "active": true,
+    "cart_id": null,
+    "cart_active": false
+  },
+  {
+    "id": 2893934,
+    "name": "Sumit Doe",
+    "email": "john.doe@example.com",
+    "avatar": "https://example.com/avatar.png",
+    "phone": "123-456-1234",
+    "active": true,
+    "cart_id": null,
+    "cart_active": false
+  },
+  {
+    "id": 2,
+    "name": "Arnav Doe",
+    "email": "john.doe@example.com",
+    "avatar": "https://example.com/avatar.png",
+    "phone": "123-456-1234",
+    "active": true,
+    "cart_id": null,
+    "cart_active": false
+  }
+]

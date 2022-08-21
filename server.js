@@ -1,7 +1,7 @@
 const fastify = require('fastify')({logger:false});
-const port = process.env.PORT || 7448
-
-
+const port = process.env.PORT || 7441
+const cartRoutes = require('./src/routes/cart.routes')
+fastify.register(cartRoutes)
 
 const start = async () => {
     try {
