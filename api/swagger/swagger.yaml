@@ -1,0 +1,307 @@
+openapi: 3.0.0
+info:
+  title: CORE CART SERVICES API
+  description: Cart service api by Sumit
+  version: 1.0.0
+servers:
+  - url: http://localhost:7448
+paths :
+  /cart/new/{user_id}:
+    description: Create a new cart or add item to existing cart
+    post:
+      description: Create a new cart if not existing with user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: string
+            example: user12389-2345
+        # - in: path
+        #   name: user_is
+        #   required: true
+        #   schema:
+        #     type: string
+        #     example: 12345rdw
+      requestBody:
+        description: Cart lines to get added in cart
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: object
+                  properties:
+                    quantity_number:
+                      type: integer
+                      example: 1
+                      minimum: 1
+                item:
+                  type: object
+                  properties:
+                    offer_id:
+                      type: string
+                      example: 1001459938
+                unit_price: 
+                  type: object
+                  properties:
+                    cent_amount:
+                      type: integer
+                      example: 149153
+                    currency:
+                      type: string
+                      enum: ["INR"]
+                    fraction: 
+                      type: integer
+                      example: 100
+      responses:
+        201:
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cart_id:
+                    type: string
+                    format: uuid
+                    example: 123e4567-e89b-12d3-a456-426678914115
+                  order_number:
+                    type: string
+                    example: 985463827
+                  user_id:
+                    type: string
+                    example: 12345rdw
+  /cart/{cart_id}/add_cart_line:
+    description: Add cart lines to existing cart with the help of cart id and cart_line
+    post:
+      description: Add items to existing cart
+      parameters:
+        - in: path
+          name: cart_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426678914115
+      requestBody:
+        description: Cart lines to get added in cart
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: object
+                  properties:
+                    quantity_number:
+                      type: integer
+                      example: 1
+                      minimum: 1
+                item:
+                  type: object
+                  properties:
+                    offer_id:
+                      type: string
+                      example: 1001459938
+                unit_price: 
+                  type: object
+                  properties:
+                    cent_amount:
+                      type: integer
+                      example: 149153
+                    currency:
+                      type: string
+                      enum: ["INR"]
+                    fraction: 
+                      type: integer
+                      example: 100
+      responses:
+        201:
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cart_line_id:
+                    type: string
+                    format: uuid
+                    example: 123e4567-e89b-12d3-a456-426678914115
+  /cart/{cart_id}/remove_cart_line/{cart_line_id}:
+    description: Remove cart_line from cart
+    delete:
+      description: Remove cart_line from cart using cart_line_id
+      parameters:
+        - in: path
+          name: cart_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426678914115
+        - in: path
+          name: cart_line_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426678914115
+      responses:
+        204:
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cart_line_id:
+                    type: string
+                    format: uuid
+                    example: 123e4567-e89b-12d3-a456-426678914115
+  /cart/{cart_id}/update_cart_line/{cart_line_id}:
+    description: Remove cart_line from cart
+    patch:
+      description: Remove cart_line from cart using cart_line_id
+      parameters:
+        - in: path
+          name: cart_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426678914115
+        - in: path
+          name: cart_line_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426678914115
+      requestBody:
+        description: Cart line quantity update
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity_number:
+                  type: integer
+                  example: 5
+                  minimum: 1
+      responses:
+        204:
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cart_line_id:
+                    type: string
+                    format: uuid
+                    example: 123e4567-e89b-12d3-a456-426678914115
+  /cart/{cart_id}:
+    description: Cart Response
+    get:
+      description: Get cart details
+      parameters:
+        - in: path
+          name: cart_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426678914115
+      responses:
+        204:
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cart_id:
+                    type: string
+                    format: uuid
+                    example: 123e4567-e89b-12d3-a456-426678914115
+                  order_number:
+                    type: string
+                    example: hjsdj74737
+                  total_quantity:
+                    type: integer
+                    example: 20
+                  total_items:
+                    type: integer
+                    example: 6
+                  cart_lines:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        cart_line_id:
+                          type: string
+                          format: uuid
+                          example: 123e4567-e89b-12d3-a456-426678914115
+                        unit_price: 
+                          type: object
+                          properties:
+                            cent_amount:
+                              type: integer
+                              example: 149153
+                            currency:
+                              type: string
+                              enum: ["INR"]
+                            fraction: 
+                              type: integer
+                              example: 100
+                        quantity:
+                          type: object
+                          properties:
+                            quantity_number:
+                              type: integer
+                              example: 10
+                        items:
+                          type: object
+                          properties:
+                            offer_id:
+                              type: string
+                              example: 1001459938
+                  totals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: GRAND_TOTAL
+                        price:
+                          type: object
+                          properties:
+                            cent_amount:
+                              type: integer
+                              example: 149153
+                            currency:
+                              type: string
+                              enum: ["INR"]
+                            fraction: 
+                              type: integer
+                              example: 100
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+      
