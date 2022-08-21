@@ -3,7 +3,19 @@ const fs = require("fs");
 const path = require("path");
 function generateCart(req, reply) {
   try {
-    let {user_id} = req.params; 
+    let cartAll;
+    fs.readFile(path.join(__dirname, "../data")+ "/cart.json","utf-8",(err, data)=>{
+
+      if(err) throw new Error(err);
+      else{
+        cartAll = JSON.parse(data);
+      }
+    })
+
+    let {user_id} = req.params; //getting the user_id from params
+
+    let status
+
     fs.readFile(path.join(__dirname, "../data")+ "/users.json","utf-8",(err, data)=>{
       if(err) {
         console.log(err);
@@ -14,16 +26,24 @@ function generateCart(req, reply) {
         let actual_user = users.filter((e)=>{
           return (e.id == user_id)
         })
+
         actual_user = actual_user[0]
+
+        if(! actual_user) return reply.code(400).send({status:"User not found"});
+
         let cart
+
         if(!actual_user.cart_active && ! actual_user.cart_id){
+
           cart ={
             cart_id:uuidv4(),
             order_number: Math.floor(Math.random() * 1000000),
             cart_lines: req.body.cart_line_id ? [req.body] : [],
             user_id:user_id,
           }
-          let data = JSON.stringify([cart], null, 2);
+
+          let data = JSON.stringify([...cartAll,cart], null, 2);
+
           fs.writeFile(path.join(__dirname, "../data")+ "/cart.json",
             data,
             (err) => {
@@ -31,13 +51,18 @@ function generateCart(req, reply) {
               else console.log("Data written to file");
             }
           );
+
           users = users.filter((item)=>{//separate the current user to avoid having duplicate data of user
             return item.id != user_id;
           })
+
           actual_user.cart_active = true;//after creating cart making it true and attaching cart_id no;
+
           actual_user.cart_id = cart.cart_id
-          console.log(actual_user,"Actial user dikh rha h")
+
+         
           let revisedUser = JSON.stringify([...users,actual_user],null,2)
+
           fs.writeFile(path.join(__dirname, "../data")+ "/users.json",
           revisedUser,
             (err) => {
@@ -45,19 +70,21 @@ function generateCart(req, reply) {
               console.log("Data written to file");
             }
           );
+          status = "Cart created successfully";
+
           replyer(cart)
+
         }else{
-          fs.readFile(path.join(__dirname, "../data")+ "/cart.json","utf-8",(err, data)=>{
-            if(err) throw new Error(err);
-            else{
-              let all_carts = JSON.parse(data);
-                let user_cart = all_carts.filter((item)=>{
-                  return item.user_id == user_id
+                let user_cart = cartAll.filter((item)=>{
+                  return item.user_id === user_id
                 })
+
                 user_cart = user_cart[0];
+
+                status= "Cart already active"
+
                 replyer(user_cart)
-            }
-          })
+           
         }
         
       }
@@ -67,7 +94,8 @@ function generateCart(req, reply) {
       return reply.code(201).send({
       cart_id:data.cart_id,
       user_id:data.user_id,
-      order_number:data.order_number
+      order_number:data.order_number,
+      status
     })
     }
     

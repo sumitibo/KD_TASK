@@ -1,15 +1,5 @@
 [
   {
-    "id": 2893934,
-    "name": "Sumit Doe",
-    "email": "john.doe@example.com",
-    "avatar": "https://example.com/avatar.png",
-    "phone": "123-456-1234",
-    "active": true,
-    "cart_id": null,
-    "cart_active": false
-  },
-  {
     "id": 2,
     "name": "Arnav Doe",
     "email": "john.doe@example.com",
@@ -20,13 +10,23 @@
     "cart_active": false
   },
   {
-    "id": 149849,
+    "id": 3,
+    "name": "Sumit Doe",
+    "email": "john.doe@example.com",
+    "avatar": "https://example.com/avatar.png",
+    "phone": "123-456-1234",
+    "active": true,
+    "cart_id": "e983c896-2427-449d-b634-43fdbecd39f0",
+    "cart_active": true
+  },
+  {
+    "id": 1,
     "name": "John Doe",
     "email": "john.doe@example.com",
     "avatar": "https://example.com/avatar.png",
     "phone": "123-456-1234",
     "active": true,
-    "cart_id": "21d46dab-e22b-47d2-81c9-cceca1324f9a",
+    "cart_id": "713ad4d5-d950-4f6a-a6d6-383ecff4af7c",
     "cart_active": true
   }
 ]

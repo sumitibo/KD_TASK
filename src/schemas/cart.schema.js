@@ -37,16 +37,17 @@ const new_cart_schema = {
     required: ["user_id"],
   },
   body: cart_line,
-  // response: {
-  //   201: {
-  //     type: "object",
-  //     properties: {
-  //       cart_id: { type: "string", format: "uuid" },
-  //       order_number: { type: "string" },
-  //       user_id: { type: "string" },
-  //     },
-  //   },
-  // },
+  response: {
+    201: {
+      type: "object",
+      properties: {
+        cart_id: { type: "string", format: "uuid" },
+        order_number: { type: "string" },
+        user_id: { type: "string" },
+        status:{type:'string'}
+      },
+    },
+  },
 };
 
 module.exports = { new_cart_schema };
