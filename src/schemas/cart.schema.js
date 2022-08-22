@@ -111,4 +111,43 @@ const delete_cart_line = {
   },
 }
 
+const update_cart_line = {
+  params: {
+    type: "object",
+    properties: {
+      cart_id: {
+        type: "string",
+        format: "uuid",
+      },
+      cart_line_id:{
+        type: "string",
+        format: "uuid",
+      }
+    },
+    required: ["cart_id","cart_line_id"],
+  },
+  body:{
+    type: "object",
+    properties:{
+      quantity:{
+        type: "object",
+        properties: {
+          quantity_number:{
+            type: "integer",
+            minimum:1
+          }
+        }
+      }
+    }
+  },
+  response: {
+    200: {
+      type: "object",
+      properties: {
+        status:{type:'string'}
+      },
+    },
+  },
+}
+
 module.exports = { new_cart_schema , add_cart_line,delete_cart_line};

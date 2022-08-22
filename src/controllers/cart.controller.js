@@ -252,4 +252,12 @@ function deleteCartLine(req, reply){
   }
 }
 
-module.exports = { generateCart,addCartLine,deleteCartLine };
+function updateQuantity(req,reply){
+  try{
+    return reply.code(200).send({status:"Entering updateQuantity"})
+  }catch(err){
+    return reply.code(400).send(err);
+  }
+}
+
+module.exports = { generateCart,addCartLine,deleteCartLine,updateQuantity};

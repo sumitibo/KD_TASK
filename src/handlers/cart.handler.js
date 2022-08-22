@@ -1,4 +1,4 @@
-const {generateCart,addCartLine,deleteCartLine} = require('../controllers/cart.controller');
+const {generateCart,addCartLine,deleteCartLine,updateQuantity} = require('../controllers/cart.controller');
 const {new_cart_schema,add_cart_line,delete_cart_line} = require('../schemas/cart.schema');
 
 const create_new_cart = {
