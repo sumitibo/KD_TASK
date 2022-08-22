@@ -37,7 +37,7 @@ function generateCart(req, reply) {
           cart ={
             cart_id:uuidv4(),
             order_number: Math.floor(Math.random() * 1000000),
-            cart_lines: req.body.cart_line_id ? [req.body] : [],
+            cart_lines: req.body.cart_lines ? [...req.body.cart_lines] : [],
             user_id:user_id,
           }
 
@@ -144,7 +144,35 @@ function addCartLine(req,reply){
 
             //item is already present in the cart lines of user;
 
-            replyer("Item already present in the cart")
+            //let's get that cart line first and that product with the help of the offer_id and increase the quantity by 1 if user tries to add the same product multiple times
+            let updatedCart = user_cart.cart_lines.map((e)=>{
+
+              if(e.item.offer_id == req.body.item.offer_id) e.quantity.quantity_number+=1;
+                
+               return e;
+            })
+            console.log(updatedCart)
+
+            user_cart.cart_lines = updatedCart;
+
+            //filtering out the user_cart to avoid duplication while rewriting the cart database;
+
+            let existingcarts = allCarts.filter((item)=>{
+              return item.cart_id != cart_id
+            })
+
+            let modifiedCarts = JSON.stringify([...existingcarts,user_cart],null,2);
+
+            fs.writeFile(path.join(__dirname, "../data")+ "/cart.json",
+              modifiedCarts,
+            (err) => {
+              if (err) throw new Error(err);
+              //console.log("Data written to file");
+            }
+            );
+
+
+            replyer("Item already present in the cart,quantity gets updated")
           }else{
             //item is not present in the cart lines of user;
 

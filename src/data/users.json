@@ -26,7 +26,7 @@
     "avatar": "https://example.com/avatar.png",
     "phone": "123-456-1234",
     "active": true,
-    "cart_id": null,
-    "cart_active": false
+    "cart_id": "ec53e29a-c9fb-4f82-9817-9fc420cb1145",
+    "cart_active": true
   }
 ]
