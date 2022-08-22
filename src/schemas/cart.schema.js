@@ -31,7 +31,7 @@ const cart_line = {
   },
   required:["quantity", "item", "unit_price"]
 };
-
+//creating new cart
 const new_cart_schema = {
   // params: {
   //   type: "object",
@@ -63,7 +63,7 @@ const new_cart_schema = {
     },
   },
 };
-
+//adding cart_line to cart_lines
 const add_cart_line = {
   params: {
     type: "object",
@@ -85,7 +85,7 @@ const add_cart_line = {
     },
   },
 };
-
+//delete cart_line
 const delete_cart_line = {
   params: {
     type: "object",
@@ -110,7 +110,7 @@ const delete_cart_line = {
     },
   },
 }
-
+//update quantity of cart_line
 const update_cart_line = {
   params: {
     type: "object",
@@ -151,5 +151,31 @@ const update_cart_line = {
     },
   },
 }
+//get the specific cart customised details;
+const get_cart_detail ={
+  params: {
+    type: "object",
+    properties: {
+      cart_id: {
+        type: "string",
+        format: "uuid",
+      }
+    },
+    required: ["cart_id"],
+  },
+  response: {
+    200: {
+      type: "object",
+      properties: {
+        cart_id:{type:"string"},
+        order_number:{type:"string"},
+        total_quantity:{type:"integer"},
+        total_items:{type:"integer"},
+        cart_lines:{type:'array',items:cart_line},
+        totals:{type:'array'}
+      },
+    },
+  },
+}
 
-module.exports = { new_cart_schema , add_cart_line,delete_cart_line,update_cart_line};
+module.exports = { new_cart_schema , add_cart_line,delete_cart_line,update_cart_line,get_cart_detail};
