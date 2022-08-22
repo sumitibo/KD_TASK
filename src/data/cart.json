@@ -5,17 +5,17 @@
     "cart_lines": [
       {
         "quantity": {
-          "quantity_number": 2
+          "quantity_number": 1
         },
         "item": {
-          "offer_id": "744823"
+          "offer_id": "744821"
         },
         "unit_price": {
           "cent_amount": 567,
           "currency": "INR",
           "fraction": 100
         },
-        "cart_line_id": "5c9179a5-9838-4969-bf28-51c2bfe70b34"
+        "cart_line_id": "8f2a94da-5450-4da7-a204-d7308b08aa24"
       }
     ],
     "user_id": "1"
