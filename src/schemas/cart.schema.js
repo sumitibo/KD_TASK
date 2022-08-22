@@ -172,7 +172,24 @@ const get_cart_detail ={
         total_quantity:{type:"integer"},
         total_items:{type:"integer"},
         cart_lines:{type:'array',items:cart_line},
-        totals:{type:'array'}
+        totals:{
+          type: 'array',
+          items:{
+            type: 'object',
+            properties: {
+              type:{type:"string"},
+              price:{
+                type: 'object',
+                properties: {
+                  cent_amount:{type:"integer"},
+                  currency:{type:"string"},
+                  fraction:{type:"integer"}
+                }
+              }
+            }
+          }
+          
+        }
       },
     },
   },
