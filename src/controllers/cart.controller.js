@@ -33,11 +33,12 @@ function generateCart(req, reply) {
         let cart
 
         if(!actual_user.cart_active && ! actual_user.cart_id){
-
+          if(req.body.cart_lines[0])req.body.cart_lines[0].cart_line_id = uuidv4();
+          console.log(req.body.cart_lines)
           cart ={
             cart_id:uuidv4(),
             order_number: Math.floor(Math.random() * 1000000),
-            cart_lines: req.body.cart_lines ? [...req.body.cart_lines] : [],
+            cart_lines: req.body.cart_lines[0] ? [...req.body.cart_lines] : [],
             user_id:user_id,
           }
 
@@ -208,7 +209,7 @@ function addCartLine(req,reply){
 
 function deleteCartLine(req, reply){
   try{
-    let {cart_id,line_id} = req.params;
+    let {cart_id,cart_line_id} = req.params;
     fs.readFile(path.join(__dirname, "../data")+ "/cart.json","utf-8",(err, data)=>{
       if(err) throw new Error(err);
       else{
@@ -218,14 +219,13 @@ function deleteCartLine(req, reply){
         })
         userCart = userCart[0] //getting the exact cart;
 
-        let modifiedUserCartLines = userCart.cart_lines.map((item)=>{
-          return item.cart_line_id != line_id;
+        console.log(userCart,cart_line_id);
+
+        let deletedCart = userCart.cart_lines.filter((item)=>{
+           return item.cart_line_id != cart_line_id
         })
 
-        //now we will attach the modified cart to the user cart;
-
-        userCart.cart_lines = modifiedUserCartLines;
-
+        userCart.cart_lines = deletedCart;
         //filter the cart to avoid duplication of the same cart;
 
         let allCarts = data.filter((item)=>{

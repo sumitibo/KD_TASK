@@ -94,12 +94,12 @@ const delete_cart_line = {
         type: "string",
         format: "uuid",
       },
-      line_id:{
+      cart_line_id:{
         type: "string",
         format: "uuid",
       }
     },
-    required: ["cart_id","line_id"],
+    required: ["cart_id","cart_line_id"],
   },
   response: {
     200: {
