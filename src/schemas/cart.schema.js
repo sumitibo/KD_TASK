@@ -33,15 +33,23 @@ const cart_line = {
 };
 
 const new_cart_schema = {
-  params: {
+  // params: {
+  //   type: "object",
+  //   properties: {
+  //     id: {
+  //       type: "string",
+  //       minLength: 1,
+  //     },
+  //   },
+  //   required: ["id"],
+  // },
+  body:{
     type: "object",
     properties: {
-      id: {
-        type: "string",
-        minLength: 1,
-      },
+      user_id: { type: "string",minLength: 1},
+    cart_lines: { type: "array", items:cart_line}
     },
-    required: ["id"],
+    required: ["user_id"],
   },
   response: {
     201: {
@@ -62,23 +70,45 @@ const add_cart_line = {
     properties: {
       cart_id: {
         type: "string",
-        // format: "uuid",
+        format: "uuid",
       },
     },
     required: ["cart_id"],
   },
-  // body: cart_line,
-  // response: {
-  //   201: {
-  //     type: "object",
-  //     properties: {
-  //       cart_id: { type: "string", format: "uuid" },
-  //       order_number: { type: "string" },
-  //       user_id: { type: "string" },
-  //       status:{type:'string'}
-  //     },
-  //   },
-  // },
+  body: cart_line,
+  response: {
+    201: {
+      type: "object",
+      properties: {
+        status:{type:'string'}
+      },
+    },
+  },
 };
 
-module.exports = { new_cart_schema , add_cart_line};
+const delete_cart_line = {
+  params: {
+    type: "object",
+    properties: {
+      cart_id: {
+        type: "string",
+        format: "uuid",
+      },
+      line_id:{
+        type: "string",
+        format: "uuid",
+      }
+    },
+    required: ["cart_id","line_id"],
+  },
+  response: {
+    200: {
+      type: "object",
+      properties: {
+        status:{type:'string'}
+      },
+    },
+  },
+}
+
+module.exports = { new_cart_schema , add_cart_line,delete_cart_line};

@@ -1,5 +1,5 @@
-const {generateCart,addCartLine} = require('../controllers/cart.controller');
-const {new_cart_schema,add_cart_line} = require('../schemas/cart.schema');
+const {generateCart,addCartLine,deleteCartLine} = require('../controllers/cart.controller');
+const {new_cart_schema,add_cart_line,delete_cart_line} = require('../schemas/cart.schema');
 
 const create_new_cart = {
   schema:new_cart_schema,
@@ -11,4 +11,8 @@ const add_cart_lines ={
   handler:addCartLine
 }
 
-module.exports ={create_new_cart,add_cart_lines}
+const delete_cart_lines = {
+  schema:delete_cart_line,
+  handler:deleteCartLine
+}
+module.exports ={create_new_cart,add_cart_lines,delete_cart_lines}

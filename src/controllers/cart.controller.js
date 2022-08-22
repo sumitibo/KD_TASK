@@ -11,8 +11,8 @@ function generateCart(req, reply) {
       }
     })
 
-    let {id} = req.params; //getting the id from params
-
+    let {user_id} = req.body; //getting the id from params
+    user_id = user_id.trim() //to avoid white spaces;
     let status
 
     fs.readFile(path.join(__dirname, "../data")+ "/users.json","utf-8",(err, data)=>{
@@ -23,7 +23,7 @@ function generateCart(req, reply) {
         //geting the user id to get the exact user from the list;
 
         let actual_user = users.filter((e)=>{
-          return (e.id == id)
+          return (e.id == user_id)
         })
 
         actual_user = actual_user[0]
@@ -38,7 +38,7 @@ function generateCart(req, reply) {
             cart_id:uuidv4(),
             order_number: Math.floor(Math.random() * 1000000),
             cart_lines: req.body.cart_line_id ? [req.body] : [],
-            user_id:id,
+            user_id:user_id,
           }
 
           let newCarter = JSON.stringify([...cartAll,cart], null, 2);//merging all existing carts with new one cart;
@@ -52,7 +52,7 @@ function generateCart(req, reply) {
           );
 
           users = users.filter((item)=>{//separate the current user to avoid having duplicate data of user
-            return item.id != id;
+            return item.id != user_id;
           })
 
           actual_user.cart_active = true;//after creating cart making it true and attaching cart_id no;
@@ -80,7 +80,7 @@ function generateCart(req, reply) {
             else{
               data = JSON.parse(data);
               let user_cart = data.filter((item)=>{
-                return item.user_id === id
+                return item.user_id === user_id
               })
 
               user_cart = user_cart[0];
@@ -144,7 +144,7 @@ function addCartLine(req,reply){
 
             //item is already present in the cart lines of user;
 
-            replyer({status:"Item already present in the cart"})
+            replyer("Item already present in the cart")
           }else{
             //item is not present in the cart lines of user;
 
@@ -160,25 +160,17 @@ function addCartLine(req,reply){
         newModifiedCart,
           (err) => {
             if (err) console.log("line no 69 se aarha h");
-            console.log("Data written to file");
+            //console.log("Data written to file");
           }
         );
-        replyer(user_cart)
-            
+        replyer("Item added to cart successfully");
           }
-
-
-
-
-        
-
-        
         }
         
       }
     })
     function replyer(data){
-      return reply.code(201).send(data)
+      return reply.code(201).send({status:data})
     }
     
   }catch(err){
@@ -186,4 +178,50 @@ function addCartLine(req,reply){
   }
 }
 
-module.exports = { generateCart,addCartLine };
+function deleteCartLine(req, reply){
+  try{
+    let {cart_id,line_id} = req.params;
+    fs.readFile(path.join(__dirname, "../data")+ "/cart.json","utf-8",(err, data)=>{
+      if(err) throw new Error(err);
+      else{
+        data = JSON.parse(data);
+        let userCart = data.filter((item)=>{ //getting that cart in which we need to delete that  cartline given in request;
+          return item.cart_id == cart_id;
+        })
+        userCart = userCart[0] //getting the exact cart;
+
+        let modifiedUserCartLines = userCart.cart_lines.map((item)=>{
+          return item.cart_line_id != line_id;
+        })
+
+        //now we will attach the modified cart to the user cart;
+
+        userCart.cart_lines = modifiedUserCartLines;
+
+        //filter the cart to avoid duplication of the same cart;
+
+        let allCarts = data.filter((item)=>{
+          return item.cart_id != cart_id;
+        })
+
+        //now merging the all carts with our current user cart as fs will rewrite the whole database;
+
+        let modifiedCartDatas = JSON.stringify([...allCarts,userCart],null,2);
+
+        fs.writeFile(path.join(__dirname, "../data")+ "/cart.json",
+        modifiedCartDatas,
+          (err) => {
+            if (err) throw new Error(err);
+            //console.log("Data written to file");
+          }
+        );
+      }
+    })
+
+    return reply.code(200).send({status:"deleteCartLine"});
+  }catch(err){
+    return reply.code(400).send(err);
+  }
+}
+
+module.exports = { generateCart,addCartLine,deleteCartLine };
