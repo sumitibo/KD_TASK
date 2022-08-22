@@ -51,6 +51,20 @@
           "fraction": 100
         },
         "cart_line_id": "9470a56f-5921-4bcf-b492-381a1c69bdee"
+      },
+      {
+        "quantity": {
+          "quantity_number": 10
+        },
+        "item": {
+          "offer_id": "7448334"
+        },
+        "unit_price": {
+          "cent_amount": 10,
+          "currency": "INR",
+          "fraction": 100
+        },
+        "cart_line_id": "71036692-763e-4916-95f3-ba61f3970515"
       }
     ],
     "user_id": "1"

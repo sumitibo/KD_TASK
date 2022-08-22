@@ -10,7 +10,7 @@ const {
   add_cart_line,
   delete_cart_line,
   update_cart_line,
-  get_cart_detail
+  get_cart_detail,
 } = require("../schemas/cart.schema");
 
 const create_new_cart = {
@@ -43,5 +43,5 @@ module.exports = {
   add_cart_lines,
   delete_cart_lines,
   update_cart,
-  get_cart_details
+  get_cart_details,
 };
