@@ -17,7 +17,7 @@ function generateCart(req, reply) {
 
     fs.readFile(path.join(__dirname, "../data")+ "/users.json","utf-8",(err, data)=>{
       if(err) {
-        console.log(err,"Line no 21 se aa rha h");
+        throw new Error(err);
       }else{
         let users = JSON.parse(data);
         //geting the user id to get the exact user from the list;
@@ -34,7 +34,7 @@ function generateCart(req, reply) {
 
         if(!actual_user.cart_active && ! actual_user.cart_id){
           if(req.body.cart_lines[0])req.body.cart_lines[0].cart_line_id = uuidv4();
-          console.log(req.body.cart_lines)
+          //console.log(req.body.cart_lines)
           cart ={
             cart_id:uuidv4(),
             order_number: Math.floor(Math.random() * 1000000),
@@ -47,8 +47,8 @@ function generateCart(req, reply) {
           fs.writeFile(path.join(__dirname, "../data")+ "/cart.json",
           newCarter,
             (err) => {
-              if (err) console.log("Line no 50 se aa rha h");
-              else console.log("Data written to file");
+              if (err) throw new Error(err);
+               //console.log("Data written to file");
             }
           );
 
@@ -66,8 +66,8 @@ function generateCart(req, reply) {
           fs.writeFile(path.join(__dirname, "../data")+ "/users.json",
           revisedUser,
             (err) => {
-              if (err) console.log("line no 69 se aarha h");
-              console.log("Data written to file");
+              if (err) throw new Error(err);
+              //console.log("Data written to file");
             }
           );
           status = "Cart created successfully";
@@ -152,7 +152,7 @@ function addCartLine(req,reply){
                 
                return e;
             })
-            console.log(updatedCart)
+            //console.log(updatedCart)
 
             user_cart.cart_lines = updatedCart;
 
@@ -188,7 +188,7 @@ function addCartLine(req,reply){
         fs.writeFile(path.join(__dirname, "../data")+ "/cart.json",
         newModifiedCart,
           (err) => {
-            if (err) console.log("line no 69 se aarha h");
+            if (err) throw new Error(err);
             //console.log("Data written to file");
           }
         );
@@ -219,7 +219,7 @@ function deleteCartLine(req, reply){
         })
         userCart = userCart[0] //getting the exact cart;
 
-        console.log(userCart,cart_line_id);
+        //console.log(userCart,cart_line_id);
 
         let deletedCart = userCart.cart_lines.filter((item)=>{
            return item.cart_line_id != cart_line_id
