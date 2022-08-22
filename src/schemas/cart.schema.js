@@ -10,7 +10,12 @@ const cart_line = {
         },
       },
     },
-    offer_id: { type: "string" },
+    item:{
+      type: "object",
+      properties: {
+        offer_id: { type: "string" }
+      }
+    },
     unit_price: {
       type: "object",
       properties: {
@@ -21,22 +26,23 @@ const cart_line = {
         },
         fraction: { type: "integer" },
       },
+      required:["cent_amount", "currency","fraction"],
     },
   },
+  required:["quantity", "item", "unit_price"]
 };
 
 const new_cart_schema = {
   params: {
     type: "object",
     properties: {
-      user_id: {
+      id: {
         type: "string",
         minLength: 1,
       },
     },
-    required: ["user_id"],
+    required: ["id"],
   },
-  body: cart_line,
   response: {
     201: {
       type: "object",
@@ -50,4 +56,29 @@ const new_cart_schema = {
   },
 };
 
-module.exports = { new_cart_schema };
+const add_cart_line = {
+  params: {
+    type: "object",
+    properties: {
+      cart_id: {
+        type: "string",
+        // format: "uuid",
+      },
+    },
+    required: ["cart_id"],
+  },
+  // body: cart_line,
+  // response: {
+  //   201: {
+  //     type: "object",
+  //     properties: {
+  //       cart_id: { type: "string", format: "uuid" },
+  //       order_number: { type: "string" },
+  //       user_id: { type: "string" },
+  //       status:{type:'string'}
+  //     },
+  //   },
+  // },
+};
+
+module.exports = { new_cart_schema , add_cart_line};

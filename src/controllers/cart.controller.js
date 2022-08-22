@@ -11,7 +11,7 @@ function generateCart(req, reply) {
       }
     })
 
-    let {user_id} = req.params; //getting the user_id from params
+    let {id} = req.params; //getting the id from params
 
     let status
 
@@ -23,7 +23,7 @@ function generateCart(req, reply) {
         //geting the user id to get the exact user from the list;
 
         let actual_user = users.filter((e)=>{
-          return (e.id == user_id)
+          return (e.id == id)
         })
 
         actual_user = actual_user[0]
@@ -38,7 +38,7 @@ function generateCart(req, reply) {
             cart_id:uuidv4(),
             order_number: Math.floor(Math.random() * 1000000),
             cart_lines: req.body.cart_line_id ? [req.body] : [],
-            user_id:user_id,
+            user_id:id,
           }
 
           let newCarter = JSON.stringify([...cartAll,cart], null, 2);//merging all existing carts with new one cart;
@@ -52,7 +52,7 @@ function generateCart(req, reply) {
           );
 
           users = users.filter((item)=>{//separate the current user to avoid having duplicate data of user
-            return item.id != user_id;
+            return item.id != id;
           })
 
           actual_user.cart_active = true;//after creating cart making it true and attaching cart_id no;
@@ -80,7 +80,7 @@ function generateCart(req, reply) {
             else{
               data = JSON.parse(data);
               let user_cart = data.filter((item)=>{
-                return item.user_id === user_id
+                return item.user_id === id
               })
 
               user_cart = user_cart[0];
@@ -96,7 +96,6 @@ function generateCart(req, reply) {
     });
 
     function replyer(data){
-      console.log(data,"dekhe to zara")
       return reply.code(201).send({
       cart_id:data.cart_id,
       user_id:data.user_id,
@@ -110,4 +109,52 @@ function generateCart(req, reply) {
   }
 }
 
-module.exports = { generateCart };
+function addCartLine(req,reply){
+  try{
+    let {cart_id} = req.params;
+    let allCarts
+    fs.readFile(path.join(__dirname, "../data")+ "/cart.json","utf-8",(err, data)=>{
+      if(err) throw new Error(err);
+      else{
+        allCarts = JSON.parse(data);
+        let user_cart = allCarts.filter((item)=>{
+          return item.cart_id == cart_id
+        })
+
+        if(user_cart.length === 0){
+
+          return reply.code(400).send({status:"Cart not found"})
+
+        }else{
+
+        user_cart = user_cart[0];
+
+        user_cart.cart_lines =[...user_cart.cart_lines,{...req.body,cart_line_id:uuidv4()}]
+        
+        let filterCart = allCarts.filter((item)=>{
+          return item.cart_id != cart_id;
+        })
+        let newModifiedCart = JSON.stringify([...filterCart,user_cart],null,2);
+        //console.log(newModifiedCart)
+        fs.writeFile(path.join(__dirname, "../data")+ "/cart.json",
+        newModifiedCart,
+          (err) => {
+            if (err) console.log("line no 69 se aarha h");
+            console.log("Data written to file");
+          }
+        );
+        replyer(user_cart)
+        }
+        
+      }
+    })
+    function replyer(data){
+      return reply.code(201).send(data)
+    }
+    
+  }catch(err){
+    return reply.code(400).send(err);
+  }
+}
+
+module.exports = { generateCart,addCartLine };
