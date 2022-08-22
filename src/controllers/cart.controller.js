@@ -127,14 +127,34 @@ function addCartLine(req,reply){
 
         }else{
 
-        user_cart = user_cart[0];
+        user_cart = user_cart[0];//getting the exact user;
 
-        user_cart.cart_lines =[...user_cart.cart_lines,{...req.body,cart_line_id:uuidv4()}]
+          //need to check whther the same offer_id(product ) is already present in the cart lines of user or not
+
+          let itemPresent = false;
+
+          for(let i=0;i<user_cart.cart_lines.length;i++){
+            if(user_cart.cart_lines[i].item.offer_id == req.body.item.offer_id){
+              itemPresent = true;
+              break;
+            }
+          }
+
+          if(itemPresent){
+
+            //item is already present in the cart lines of user;
+
+            replyer({status:"Item already present in the cart"})
+          }else{
+            //item is not present in the cart lines of user;
+
+            user_cart.cart_lines =[...user_cart.cart_lines,{...req.body,cart_line_id:uuidv4()}]
         
-        let filterCart = allCarts.filter((item)=>{
+        let filterCart = allCarts.filter((item)=>{ //filtering the data so to avoid the duplication of carts due to fs module rewrite;
           return item.cart_id != cart_id;
         })
-        let newModifiedCart = JSON.stringify([...filterCart,user_cart],null,2);
+
+            let newModifiedCart = JSON.stringify([...filterCart,user_cart],null,2);//merging the existing carts with new modified cart;
         //console.log(newModifiedCart)
         fs.writeFile(path.join(__dirname, "../data")+ "/cart.json",
         newModifiedCart,
@@ -144,6 +164,15 @@ function addCartLine(req,reply){
           }
         );
         replyer(user_cart)
+            
+          }
+
+
+
+
+        
+
+        
         }
         
       }

@@ -32,6 +32,30 @@
           "fraction": 100
         },
         "cart_line_id": "f1ec30b5-e8d7-4960-bc0b-21ea7aa290ad"
+      },
+      {
+        "quantity": 1,
+        "item": {
+          "offer_id": 744826
+        },
+        "unit_price": {
+          "cent_amount": 567,
+          "currency": "INR",
+          "fraction": 100
+        },
+        "cart_line_id": "164fb754-23c7-4733-beaa-d6ba4e0bb470"
+      },
+      {
+        "quantity": 1,
+        "item": {
+          "offer_id": 744823
+        },
+        "unit_price": {
+          "cent_amount": 567,
+          "currency": "INR",
+          "fraction": 100
+        },
+        "cart_line_id": "94a875cb-c023-4d8e-a578-342e40cf45bc"
       }
     ],
     "user_id": "1"
