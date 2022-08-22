@@ -1,4 +1,4 @@
-const {create_new_cart,add_cart_lines,delete_cart_lines} = require('../handlers/cart.handler');
+const {create_new_cart,add_cart_lines,delete_cart_lines,update_cart} = require('../handlers/cart.handler');
 
 const cartRoutes = (fastify,options,done) => {
 
@@ -6,6 +6,7 @@ const cartRoutes = (fastify,options,done) => {
     fastify.post('/cart',create_new_cart)
     fastify.post('/cart/:cart_id/cart_line',add_cart_lines)
     fastify.delete('/cart/:cart_id/cart_line/:cart_line_id',delete_cart_lines)
+    fastify.patch('/cart/:cart_id/cart_line/:cart_line_id',update_cart)
     done()
 }
 

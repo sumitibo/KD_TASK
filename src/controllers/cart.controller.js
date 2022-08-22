@@ -254,7 +254,55 @@ function deleteCartLine(req, reply){
 
 function updateQuantity(req,reply){
   try{
-    return reply.code(200).send({status:"Entering updateQuantity"})
+
+    fs.readFile(path.join(__dirname, "../data") + "/cart.json" , "utf-8" ,(err, data) =>{
+
+      if(err) throw new Error(err);
+
+      data = JSON.parse(data);
+
+      let {cart_id,cart_line_id} = req.params;
+
+      let {quantity} = req.body 
+
+      let requiredCart = data.filter((item)=>{
+        return item.cart_id == cart_id;
+      })
+
+      if(requiredCart.length == 0) return replyer(400,"Cart not found")
+
+      requiredCart = requiredCart[0];
+
+      let updatedCart = requiredCart.cart_lines.map((item)=>{ //filtering the cart and then updating its quantity;
+
+          if(item.cart_line_id == cart_line_id) item.quantity.quantity_number = quantity.quantity_number;
+            
+           return item;
+        
+      })
+
+      requiredCart.cart_lines = updatedCart; //assigning the updated cart with new quantity ;
+      
+      let allCarts = data.filter((item)=>{
+        return item.cart_id != cart_id;
+      })
+
+      let modifiedCartDatas = JSON.stringify([...allCarts,requiredCart],null,2);
+
+      fs.writeFile(path.join(__dirname, "../data")+ "/cart.json",
+      modifiedCartDatas,
+        (err) => {
+          if (err) throw new Error(err);
+          //console.log("Data written to file");
+        }
+      );
+
+      replyer(200,"Quantity updated successfully");
+    })
+    function replyer(code,message){
+      return reply.code(code).send({status:message})
+    }
+    
   }catch(err){
     return reply.code(400).send(err);
   }

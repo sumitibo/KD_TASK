@@ -136,9 +136,11 @@ const update_cart_line = {
             type: "integer",
             minimum:1
           }
-        }
+        },
+        required: ["quantity_number"],
       }
-    }
+    },
+    required:["quantity"]
   },
   response: {
     200: {
@@ -150,4 +152,4 @@ const update_cart_line = {
   },
 }
 
-module.exports = { new_cart_schema , add_cart_line,delete_cart_line};
+module.exports = { new_cart_schema , add_cart_line,delete_cart_line,update_cart_line};

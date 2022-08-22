@@ -10,16 +10,6 @@
     "cart_active": false
   },
   {
-    "id": 2,
-    "name": "Arnav Doe",
-    "email": "john.doe@example.com",
-    "avatar": "https://example.com/avatar.png",
-    "phone": "123-456-1234",
-    "active": true,
-    "cart_id": null,
-    "cart_active": false
-  },
-  {
     "id": 1,
     "name": "John Doe",
     "email": "john.doe@example.com",
@@ -27,6 +17,16 @@
     "phone": "123-456-1234",
     "active": true,
     "cart_id": "4fe0cfc6-401e-4bc6-b39d-fe5610381644",
+    "cart_active": true
+  },
+  {
+    "id": 2,
+    "name": "Arnav Doe",
+    "email": "john.doe@example.com",
+    "avatar": "https://example.com/avatar.png",
+    "phone": "123-456-1234",
+    "active": true,
+    "cart_id": "4643066c-fa66-4d2f-a4fa-224dfa8f9b29",
     "cart_active": true
   }
 ]
