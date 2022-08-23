@@ -1,11 +1,15 @@
-const fastify = require('fastify')({logger:false});
+const fastify = require('fastify');
+
 const port = process.env.PORT || 7441
 const cartRoutes = require('./src/routes/cart.routes')
-fastify.register(cartRoutes)
+
+
 
 const start = async () => {
     try {
-      await fastify.listen({ port });
+      let app = fastify({logger:false})
+      app.register(cartRoutes)
+      await app.listen({ port });
       console.log(`Server is listening on port ${port}`);
     } catch (err) {
       console.log(err.message);

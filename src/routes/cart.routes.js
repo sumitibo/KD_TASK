@@ -1,28 +1,59 @@
 const {
-  create_new_cart,
-  add_cart_lines,
-  delete_cart_lines,
-  update_cart,
-  get_cart_details,
-} = require("../handlers/cart.handler");
+  generateCart,
+  addCartLine,
+  deleteCartLine,
+  updateQuantity,
+  getCartDetails,
+} = require("../controllers/cart.controller");
+const {
+  new_cart_schema,
+  add_cart_line,
+  delete_cart_line,
+  update_cart_line,
+  get_cart_detail,
+} = require("../schemas/cart.schema");
 
-const cartRoutes = (fastify, options, done) => {
+const cartRoutes = async (fastify, options) => {
   //create a new cart
-  fastify.post("/cart", create_new_cart);
+  fastify.route({
+    method:"POST",
+    url: "/cart",
+    schema: new_cart_schema,
+    handler: generateCart,
+  });
 
   //add a cart line
-  fastify.post("/cart/:cart_id/cart_line", add_cart_lines);
+  fastify.route({
+    method:"POST",
+    url:"/cart/:cart_id/cart_line",
+    schema: add_cart_line,
+    handler: addCartLine,
+  });
 
   //delete a cart line
-  fastify.delete("/cart/:cart_id/cart_line/:cart_line_id", delete_cart_lines);
+  fastify.route({
+    method:"DELETE",
+    url:"/cart/:cart_id/cart_line/:cart_line_id",
+    schema: delete_cart_line,
+    handler: deleteCartLine,
+  });
 
   //update a cart line quantity
-  fastify.patch("/cart/:cart_id/cart_line/:cart_line_id", update_cart);
+  fastify.route({
+    method:"PATCH",
+    url:"/cart/:cart_id/cart_line/:cart_line_id",
+    schema: update_cart_line,
+    handler: updateQuantity,
+  });
 
   //get specific cart details
-  fastify.get("/cart/:cart_id", get_cart_details);
+  fastify.route({
+    method:"GET",
+    url:"/cart/:cart_id",
+    schema: get_cart_detail,
+    handler: getCartDetails,
+  });
 
-  done();
 };
 
 module.exports = cartRoutes;
