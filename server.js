@@ -1,6 +1,5 @@
 const fastify = require("fastify");
-const {client} = require("./src/config/db");
-const fp = require("fastify-plugin");
+const db = require("./src/db/db");
 const port = 7441;
 const cartRoutes = require("./src/routes/cart.routes");
 const { checkAuthentication } = require("./src/hooks/authentication");
@@ -12,9 +11,9 @@ const start = async () => {
     let app = fastify({ logger: false });
 
     app.register(cartRoutes);
-    app.decorate('client',client);
+    app.decorate('db',db);
     app.addHook("onRequest", checkAuthentication);
-    client.connect();
+    
     await app.listen({ port });
     console.log(`Server is listening on port ${port}`);
   } catch (err) {

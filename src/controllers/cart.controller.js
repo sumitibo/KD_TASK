@@ -34,9 +34,9 @@ function updateQuantity(req, reply) {
 
 async function getCartDetails(req, reply) {
   try{
-    const query = await this.client.query("SELECT * FROM TESTING")
+    const query = await this.db('testing').select().from('testing');
     console.log(query)
-    return reply.code(200).send(query)
+    return reply.code(200).send(query.rows)
   }catch(err){
     return reply.code(400).send(err);
   }
