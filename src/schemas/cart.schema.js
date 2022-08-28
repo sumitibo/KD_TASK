@@ -57,7 +57,6 @@ const new_cart_schema = {
       properties: {
         cart_id: { type: "string", format: "uuid" },
         order_number: { type: "string" },
-        user_id: { type: "string" },
         status: { type: "string" },
       },
     },
