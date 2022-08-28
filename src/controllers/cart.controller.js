@@ -114,11 +114,11 @@ async function generateCart(req, reply) {
 
 async function addCartLine(req, reply) {
   try {
-    let cart_lines = req.body;
+    const cart_lines = req.body;
 
-    let { cart_id } = req.params;
+    const { cart_id } = req.params;
 
-    let cartCheck = await this.knex("cart").where("cart_id", cart_id);
+    const cartCheck = await this.knex("cart").where("cart_id", cart_id);
 
     if (cartCheck.length === 0)
       return reply.code(404).send({ status: "Cart not found" });
@@ -166,7 +166,7 @@ async function addCartLine(req, reply) {
 
 async function deleteCartLine(req, reply) {
   try {
-    let { cart_id, cart_line_id } = req.params;
+    const { cart_id, cart_line_id } = req.params;
 
     await this.knex.transaction(async function (trx) {
       try {
@@ -190,8 +190,8 @@ async function deleteCartLine(req, reply) {
 
 async function updateQuantity(req, reply) {
   try {
-    let { cart_id, cart_line_id } = req.params;
-    let { quantity } = req.body;
+    const { cart_id, cart_line_id } = req.params;
+    const { quantity } = req.body;
     await this.knex.transaction(async function (trx) {
       try {
         await trx
@@ -214,9 +214,59 @@ async function updateQuantity(req, reply) {
 
 async function getCartDetails(req, reply) {
   try {
-    const query = await this.knex("testing").select().from("testing");
-    console.log(query);
-    return reply.code(200).send(query.rows);
+    const {cart_id} = req.params;
+
+    // const query = await this.knex("cartline").select('cart_line_id','offer_id','quantity_number','cent_amount').
+    // where('cart_id',cart_id);
+
+    const query = await this.knex("cartline").join('cart','cart.cart_id','=','cartline.cart_id').
+    where('cart.cart_id',cart_id);
+
+    const order_number = query[0].order_number;
+
+    //Performing operation to calculate some datas;
+
+    let total_quantity =0;
+    let total_items = query.length;
+    let total_cent_amount = 0;
+    let formattedData = query.map((item)=>{
+      total_quantity+=item.quantity_number;
+      total_cent_amount+= item.quantity_number * item.cent_amount
+      return {
+        cart_line_id : item.cart_line_id,
+        unit_price:{
+          cent_amount:item.cent_amount,
+          currency:item.currency,
+          fraction:item.fraction,
+        },
+        quantity:{
+          quantity_number:item.quantity_number
+        },
+        item:{
+          offer_id:item.offer_id
+        }
+      }
+    })
+
+    let response ={
+      cart_id,
+      order_number,
+      total_quantity,
+      total_items,
+      cart_lines:formattedData,
+      totals:[
+        {
+          type: "GRAND_TOTAL",
+          price:{
+            cent_amount:total_cent_amount,
+            currency:"INR",
+            fraction:10000
+          }
+        }
+      ]
+    }
+    //console.log(query);
+    return reply.code(200).send(response);
   } catch (err) {
     return reply.code(400).send(err);
   }
