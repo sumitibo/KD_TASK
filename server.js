@@ -12,7 +12,7 @@ const start = async () => {
 
     app.register(cartRoutes);
     app.decorate('knex',db);
-    //app.addHook("onRequest", checkAuthentication);
+    app.addHook("onRequest", checkAuthentication);
     
     await app.listen({ port });
     console.log(`Server is listening on port ${port}`);
