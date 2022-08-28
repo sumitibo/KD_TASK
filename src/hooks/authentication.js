@@ -19,7 +19,7 @@ async function checkAuthentication(req, reply) {
     const token = bearerToken.split(" ")[1];
     const flag = await verifyToken(token);
 
-    if(! flag ) return reply.status(400).send({status:"User is not authorized"});
+    if(! flag ) return reply.status(401).send({status:"User is not authorized"});
     
    //console.log("Entered to onRequest custom hook", req.raw.url);
    //console.log("Client IP address is:", req.socket.remoteAddress);

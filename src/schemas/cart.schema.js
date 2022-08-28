@@ -58,6 +58,7 @@ const new_cart_schema = {
         cart_id: { type: "string", format: "uuid" },
         order_number: { type: "string" },
         status: { type: "string" },
+        cart_lines:{type:'array'}
       },
     },
   },
