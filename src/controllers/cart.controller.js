@@ -135,14 +135,12 @@ async function addCartLine(req, reply) {
 
         if (productCheck.length > 0) {
           await trx
-            .select()
             .where("cart_id", cart_id)
             .andWhere("offer_id", cart_lines.item.offer_id)
             .into("cartline")
             .update({ quantity_number: productCheck[0].quantity_number + 1 });
 
           await trx.commit();
-
         } else {
           let cartLineData = {
             cart_id,
@@ -150,9 +148,7 @@ async function addCartLine(req, reply) {
             offer_id: cart_lines.item.offer_id,
             cent_amount: cart_lines.unit_price.cent_amount,
           };
-          await trx
-            .insert(cartLineData)
-            .into("cartline")
+          await trx.insert(cartLineData).into("cartline");
           await trx.commit();
         }
 
@@ -168,15 +164,49 @@ async function addCartLine(req, reply) {
   }
 }
 
-function deleteCartLine(req, reply) {
+async function deleteCartLine(req, reply) {
   try {
+    let { cart_id, cart_line_id } = req.params;
+
+    await this.knex.transaction(async function (trx) {
+      try {
+        await trx
+          .where("cart_id", cart_id)
+          .andWhere("cart_line_id", cart_line_id)
+          .into("cartline")
+          .del();
+
+        await trx.commit();
+
+        return reply.code(204).send();
+      } catch (err) {
+        await trx.rollback();
+      }
+    });
   } catch (err) {
     return reply.code(400).send(err);
   }
 }
 
-function updateQuantity(req, reply) {
+async function updateQuantity(req, reply) {
   try {
+    let { cart_id, cart_line_id } = req.params;
+    let { quantity } = req.body;
+    await this.knex.transaction(async function (trx) {
+      try {
+        await trx
+          .where("cart_id", cart_id)
+          .andWhere("cart_line_id", cart_line_id)
+          .into("cartline")
+          .update({ quantity_number: quantity.quantity_number });
+
+        await trx.commit();
+
+        return reply.code(200).send({ status: "Quanity updated successfully" });
+      } catch (err) {
+        await trx.rollback();
+      }
+    });
   } catch (err) {
     return reply.code(400).send(err);
   }
