@@ -11,7 +11,7 @@ const start = async () => {
     let app = fastify({ logger: false });
 
     app.register(cartRoutes);
-    app.decorate('db',db);
+    app.decorate('knex',db);
     app.addHook("onRequest", checkAuthentication);
     
     await app.listen({ port });
