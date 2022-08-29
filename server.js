@@ -9,7 +9,7 @@ const { checkAuthentication } = require("./src/hooks/authentication");
 
 const start = async () => {
   try {
-    let app = fastify({ logger: true });
+    let app = fastify({ logger: false });
 
     
     app.addHook("onRequest", checkAuthentication);
