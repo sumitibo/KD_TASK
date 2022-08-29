@@ -49,65 +49,62 @@ async function generateCart(req, reply) {
       }
     } else {
       const trx = await this.knex.transaction();
-      try{
-
+      try {
         data = await trx
-        .insert(newcart)
-        .into("cart")
-        .returning(["cart_id", "order_number"]);
+          .insert(newcart)
+          .into("cart")
+          .returning(["cart_id", "order_number"]);
 
-      data = await data[0];
+        data = await data[0];
 
-      let cartLineData = {
-        cart_id: data.cart_id,
-        quantity_number: cart_lines.quantity.quantity_number,
-        offer_id: cart_lines.item.offer_id,
-        cent_amount: cart_lines.unit_price.cent_amount,
-        fraction: cart_lines.unit_price.fraction
-      };
-      let cartRes = await trx
-        .insert(cartLineData)
-        .into("cartline")
-        .returning([
-          "cart_line_id",
-          "quantity_number",
-          "offer_id",
-          "cent_amount",
-          "fraction",
-          "currency",
-        ]);
+        let cartLineData = {
+          cart_id: data.cart_id,
+          quantity_number: Number(cart_lines.quantity.quantity_number),
+          offer_id: cart_lines.item.offer_id,
+          cent_amount: cart_lines.unit_price.cent_amount,
+          fraction: cart_lines.unit_price.fraction,
+        };
+        let cartRes = await trx
+          .insert(cartLineData)
+          .into("cartline")
+          .returning([
+            "cart_line_id",
+            "quantity_number",
+            "offer_id",
+            "cent_amount",
+            "fraction",
+            "currency",
+          ]);
 
-      cartRes = await cartRes[0];
+        cartRes = await cartRes[0];
 
-      await trx.commit();
+        await trx.commit();
 
-      return reply.code(201).send({
-        cart_id: data.cart_id,
-        order_number: data.order_number,
-        status: "Cart created successfully",
-        cart_lines: [
-          {
-            cart_line_id: cartRes.cart_line_id,
-            quantity: {
-              quantity_number: cartRes.quantity_number,
+        return reply.code(201).send({
+          cart_id: data.cart_id,
+          order_number: data.order_number,
+          status: "Cart created successfully",
+          cart_lines: [
+            {
+              cart_line_id: cartRes.cart_line_id,
+              quantity: {
+                quantity_number: cartRes.quantity_number,
+              },
+              item: {
+                offer_id: cartRes.offer_id,
+              },
+              unit_price: {
+                cent_amount: cartRes.cent_amount,
+                currency: cartRes.currency,
+                fraction: cartRes.fraction,
+              },
             },
-            item: {
-              offer_id: cartRes.offer_id,
-            },
-            unit_price: {
-              cent_amount: cartRes.cent_amount,
-              currency: cartRes.currency,
-              fraction: cartRes.fraction,
-            },
-          },
-        ],
-      });
-
-      }catch(err){
+          ],
+        });
+      } catch (err) {
         await trx.rollback();
         throw err;
       }
-      
     }
   } catch (err) {
     return reply.code(400).send(err);
@@ -124,49 +121,47 @@ async function addCartLine(req, reply) {
 
     if (cartCheck.length === 0)
       return reply.code(404).send({ status: "Cart not found" });
+    const trx = await this.knex.transaction();
+    try {
+      //checking if product already exits in cart then only increase the quanity by 1 ;
 
-    await this.knex.transaction(async function (trx) {
-      try {
-        //checking if product already exits in cart then only increase the quanity by 1 ;
+      let productCheck = await trx
+        .select()
+        .where({"cart_id": cart_id,
+        "offer_id": cart_lines.item.offer_id})
+        .into("cartline");
 
-        let productCheck = await trx
-          .select()
-          .where("cart_id", cart_id)
-          .andWhere("offer_id", cart_lines.item.offer_id)
-          .into("cartline");
+      if (productCheck.length > 0) {
+        await trx
+          .where({ cart_id: cart_id, offer_id: cart_lines.item.offer_id})
+          .into("cartline")
+          .update({
+            quantity_number:
+              Number(productCheck[0].quantity_number) +
+              cart_lines.quantity.quantity_number,
+          });
 
-        if (productCheck.length > 0) {
-          await trx
-            .where({ cart_id: cart_id, offer_id: " cart_lines.item.offer_id" })
-            .into("cartline")
-            .update({
-              quantity_number:
-                productCheck[0].quantity_number +
-                cart_lines.quantity.quantity_number,
-            });
-
-          await trx.commit();
-        } else {
-          //console.log("entered to else")
-          let cartLineData = {
-            cart_id,
-            quantity_number: cart_lines.quantity.quantity_number,
-            offer_id: cart_lines.item.offer_id,
-            cent_amount: cart_lines.unit_price.cent_amount,
-          };
-          await trx.insert(cartLineData).into("cartline");
-          await trx.commit();
-        }
-
-        return reply.code(201).send({
-          status: "Item added to cart successfully",
-        });
-      } catch (err) {
-        await trx.rollback();
-        console.log("TRX CATCH", err);
-        throw err;
+        await trx.commit();
+      } else {
+        //console.log("entered to else")
+        let cartLineData = {
+          cart_id,
+          quantity_number: cart_lines.quantity.quantity_number,
+          offer_id: cart_lines.item.offer_id,
+          cent_amount: cart_lines.unit_price.cent_amount,
+          fraction: cart_lines.unit_price.fraction
+        };
+        await trx.insert(cartLineData).into("cartline");
+        await trx.commit();
       }
-    });
+
+      return reply.code(201).send({
+        status: "Item added to cart successfully",
+      });
+    } catch (err) {
+      await trx.rollback();
+      throw err;
+    }
   } catch (err) {
     return reply.code(400).send(err);
   }

@@ -9,12 +9,14 @@ const cart_line = {
           minimum: 1,
         },
       },
+      required:['quantity_number']
     },
     item: {
       type: "object",
       properties: {
         offer_id: { type: "string" },
       },
+      required:['offer_id'],
     },
     unit_price: {
       type: "object",
