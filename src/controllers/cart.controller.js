@@ -115,14 +115,14 @@ async function generateCart(req, reply) {
 async function addCartLine(req, reply) {
   try {
     const cart_lines = req.body;
-
+    //console.log(cart_lines,"Entered to route");
     const { cart_id } = req.params;
 
     const cartCheck = await this.knex("cart").where("cart_id", cart_id);
 
     if (cartCheck.length === 0)
       return reply.code(404).send({ status: "Cart not found" });
-
+    
     await this.knex.transaction(async function (trx) {
       try {
         //checking if product already exits in cart then only increase the quanity by 1 ;
@@ -135,13 +135,14 @@ async function addCartLine(req, reply) {
 
         if (productCheck.length > 0) {
           await trx
-            .where("cart_id", cart_id)
-            .andWhere("offer_id", cart_lines.item.offer_id)
+            .where({"cart_id": cart_id,
+            offer_id:" cart_lines.item.offer_id"})
             .into("cartline")
-            .update({ quantity_number: productCheck[0].quantity_number + 1 });
+            .update({ quantity_number: productCheck[0].quantity_number + cart_lines.quantity.quantity_number });
 
           await trx.commit();
         } else {
+          //console.log("entered to else")
           let cartLineData = {
             cart_id,
             quantity_number: cart_lines.quantity.quantity_number,
@@ -157,6 +158,8 @@ async function addCartLine(req, reply) {
         });
       } catch (err) {
         await trx.rollback();
+        console.log("TRX CATCH",err)
+        throw err
       }
     });
   } catch (err) {
@@ -231,7 +234,9 @@ async function getCartDetails(req, reply) {
     let total_cent_amount = 0;
     let formattedData = query.map((item)=>{
       total_quantity+=item.quantity_number;
-      total_cent_amount+= item.quantity_number * item.cent_amount
+      let unitAmount = item.cent_amount/item.fraction;
+      let cartLineAmount = item.quantity_number * unitAmount;
+      total_cent_amount+= cartLineAmount;
       return {
         cart_line_id : item.cart_line_id,
         unit_price:{
