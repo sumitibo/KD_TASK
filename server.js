@@ -12,7 +12,7 @@ const start = async () => {
     let app = fastify({ logger: false });
 
     
-    app.addHook("onRequest", checkAuthentication);
+    //app.addHook("onRequest", checkAuthentication);
     app.register(swagger,{ //registered swagger to automate the api endpoint docs;
       exposeRoute: true,
       routePrefix: '/cart',

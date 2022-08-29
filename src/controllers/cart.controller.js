@@ -170,22 +170,23 @@ async function addCartLine(req, reply) {
 async function deleteCartLine(req, reply) {
   try {
     const { cart_id, cart_line_id } = req.params;
-
-    await this.knex.transaction(async function (trx) {
+    const trx = await this.knex.transaction();
       try {
-        await trx
-          .where("cart_id", cart_id)
-          .andWhere("cart_line_id", cart_line_id)
+        let res = await trx
+          .where({"cart_id": cart_id,
+          "cart_line_id": cart_line_id})
           .into("cartline")
           .del();
-
+        console.log(res);
         await trx.commit();
 
+        if(res === 0) return reply.code(409).send()
+        
         return reply.code(204).send();
       } catch (err) {
         await trx.rollback();
+        throw err;
       }
-    });
   } catch (err) {
     return reply.code(400).send(err);
   }
