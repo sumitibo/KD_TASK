@@ -181,7 +181,7 @@ async function deleteCartLine(req, reply) {
         await trx.commit();
 
         if(res === 0) return reply.code(409).send()
-        
+
         return reply.code(204).send();
       } catch (err) {
         await trx.rollback();
@@ -196,21 +196,24 @@ async function updateQuantity(req, reply) {
   try {
     const { cart_id, cart_line_id } = req.params;
     const { quantity } = req.body;
-    await this.knex.transaction(async function (trx) {
+    const trx = await this.knex.transaction();
       try {
-        await trx
-          .where("cart_id", cart_id)
-          .andWhere("cart_line_id", cart_line_id)
+        let res = await trx
+          .where({"cart_id": cart_id,
+          "cart_line_id":cart_line_id})
           .into("cartline")
           .update({ quantity_number: quantity.quantity_number });
 
         await trx.commit();
+        
+        if(res === 0) return reply.code(409).send();
 
-        return reply.code(200).send({ status: "Quanity updated successfully" });
+        return reply.code(204).send();
       } catch (err) {
         await trx.rollback();
+        throw err;
       }
-    });
+    
   } catch (err) {
     return reply.code(400).send(err);
   }
