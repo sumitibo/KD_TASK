@@ -241,13 +241,15 @@ async function getCartDetails(req, reply) {
     //Performing operation to calculate some datas;
 
     let total_quantity = 0;
-    let total_items = query.length;
+    let total_items = query[0].cart_line_id?query.length:0;
     let total_cent_amount = 0;
+
+    //if not cart lines exist
 
     if (!query[0].cart_line_id)
       return reply
         .code(200)
-        .send({ cart_id, order_number, total_quantity, total_items:0,cart_lines:[],totals: [
+        .send({ cart_id, order_number, total_quantity, total_items,cart_lines:[],totals: [
           {
             type: "GRAND_TOTAL",
             price: {
@@ -257,6 +259,9 @@ async function getCartDetails(req, reply) {
             },
           },
         ],});
+
+      //if cart_lines exists and contains cart lines then calculate all the mentioned data in format;
+
     let formattedData = query.map((item) => {
       total_quantity += item.quantity_number;
       let unitAmount = item.cent_amount / item.fraction;
