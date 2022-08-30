@@ -127,13 +127,12 @@ async function addCartLine(req, reply) {
 
       let productCheck = await trx
         .select()
-        .where({"cart_id": cart_id,
-        "offer_id": cart_lines.item.offer_id})
+        .where({ cart_id: cart_id, offer_id: cart_lines.item.offer_id })
         .into("cartline");
 
       if (productCheck.length > 0) {
         await trx
-          .where({ cart_id: cart_id, offer_id: cart_lines.item.offer_id})
+          .where({ cart_id: cart_id, offer_id: cart_lines.item.offer_id })
           .into("cartline")
           .update({
             quantity_number:
@@ -149,7 +148,7 @@ async function addCartLine(req, reply) {
           quantity_number: cart_lines.quantity.quantity_number,
           offer_id: cart_lines.item.offer_id,
           cent_amount: cart_lines.unit_price.cent_amount,
-          fraction: cart_lines.unit_price.fraction
+          fraction: cart_lines.unit_price.fraction,
         };
         await trx.insert(cartLineData).into("cartline");
         await trx.commit();
@@ -171,22 +170,21 @@ async function deleteCartLine(req, reply) {
   try {
     const { cart_id, cart_line_id } = req.params;
     const trx = await this.knex.transaction();
-      try {
-        let res = await trx
-          .where({"cart_id": cart_id,
-          "cart_line_id": cart_line_id})
-          .into("cartline")
-          .del();
-        console.log(res);
-        await trx.commit();
+    try {
+      let res = await trx
+        .where({ cart_id: cart_id, cart_line_id: cart_line_id })
+        .into("cartline")
+        .del();
+      console.log(res);
+      await trx.commit();
 
-        if(res === 0) return reply.code(409).send()
+      if (res === 0) return reply.code(409).send();
 
-        return reply.code(204).send();
-      } catch (err) {
-        await trx.rollback();
-        throw err;
-      }
+      return reply.code(204).send();
+    } catch (err) {
+      await trx.rollback();
+      throw err;
+    }
   } catch (err) {
     return reply.code(400).send(err);
   }
@@ -197,23 +195,21 @@ async function updateQuantity(req, reply) {
     const { cart_id, cart_line_id } = req.params;
     const { quantity } = req.body;
     const trx = await this.knex.transaction();
-      try {
-        let res = await trx
-          .where({"cart_id": cart_id,
-          "cart_line_id":cart_line_id})
-          .into("cartline")
-          .update({ quantity_number: quantity.quantity_number });
+    try {
+      let res = await trx
+        .where({ cart_id: cart_id, cart_line_id: cart_line_id })
+        .into("cartline")
+        .update({ quantity_number: quantity.quantity_number });
 
-        await trx.commit();
-        
-        if(res === 0) return reply.code(409).send();
+      await trx.commit();
 
-        return reply.code(204).send();
-      } catch (err) {
-        await trx.rollback();
-        throw err;
-      }
-    
+      if (res === 0) return reply.code(409).send();
+
+      return reply.code(204).send();
+    } catch (err) {
+      await trx.rollback();
+      throw err;
+    }
   } catch (err) {
     return reply.code(400).send(err);
   }
@@ -226,10 +222,20 @@ async function getCartDetails(req, reply) {
     // const query = await this.knex("cartline").select('cart_line_id','offer_id','quantity_number','cent_amount').
     // where('cart_id',cart_id);
 
-    const query = await this.knex("cartline")
-      .join("cart", "cart.cart_id", "=", "cartline.cart_id")
+    const query = await this.knex
+      .select(
+        "cart.cart_id",
+        "cart.order_number",
+        "cartline.cart_line_id",
+        "quantity_number",
+        "cent_amount",
+        "fraction",
+        "offer_id"
+      )
+      .from("cart")
+      .leftJoin("cartline", "cart.cart_id", "=", "cartline.cart_id")
       .where("cart.cart_id", cart_id);
-
+    console.log(query);
     const order_number = query[0].order_number;
 
     //Performing operation to calculate some datas;
@@ -237,6 +243,20 @@ async function getCartDetails(req, reply) {
     let total_quantity = 0;
     let total_items = query.length;
     let total_cent_amount = 0;
+
+    if (!query[0].cart_line_id)
+      return reply
+        .code(200)
+        .send({ cart_id, order_number, total_quantity, total_items:0,cart_lines:[],totals: [
+          {
+            type: "GRAND_TOTAL",
+            price: {
+              cent_amount: total_cent_amount,
+              currency: "INR",
+              fraction: 10000,
+            },
+          },
+        ],});
     let formattedData = query.map((item) => {
       total_quantity += item.quantity_number;
       let unitAmount = item.cent_amount / item.fraction;
@@ -246,7 +266,7 @@ async function getCartDetails(req, reply) {
         cart_line_id: item.cart_line_id,
         unit_price: {
           cent_amount: item.cent_amount,
-          currency: item.currency,
+          currency: "INR",
           fraction: item.fraction,
         },
         quantity: {

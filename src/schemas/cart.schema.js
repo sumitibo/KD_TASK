@@ -173,7 +173,38 @@ const get_cart_detail = {
         order_number: { type: "string" },
         total_quantity: { type: "integer" },
         total_items: { type: "integer" },
-        cart_lines: { type: "array", items: cart_line },
+        cart_lines: { type: "array", items:{
+          type:'object',
+          properties: {
+            cart_line_id:{type:'string'},
+            quantity: {
+              type: "object",
+              properties: {
+                quantity_number: {
+                  type: "integer",
+                  minimum: 1,
+                },
+              }
+            },
+            item: {
+              type: "object",
+              properties: {
+                offer_id: { type: "string" },
+              }
+            },
+            unit_price: {
+              type: "object",
+              properties: {
+                cent_amount: { type: "integer" },
+                currency: {
+                  type: "string",
+                  enum: ["INR"],
+                },
+                fraction: { type: "integer" },
+              }
+            },
+          },
+        }},
         totals: {
           type: "array",
           items: {
