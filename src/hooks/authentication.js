@@ -7,12 +7,15 @@ function verifyToken(token) {
     return false;
 }
 
-async function checkAuthentication(req, reply) {
+async function checkAuthentication(req, reply,) {
   //we can check the authentication here like we can extractt the bearer token and get match with jwt;
   
     const bearerToken = req.headers.authorization;
     //  console.log(bearerToken);
     //If not we will throw an error
+  
+    if(req.raw.url.startsWith("/cartdoc")) return; //excluding the swagger api doc to avoid asking for bearer token;
+   
     if (!bearerToken || !bearerToken.startsWith("Bearer "))
       return reply.status(400).send("Please provide a bearer token");
 

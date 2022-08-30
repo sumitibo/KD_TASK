@@ -205,7 +205,7 @@ async function updateQuantity(req, reply) {
 
       if (res === 0) return reply.code(409).send();
 
-      return reply.code(204).send();
+      return reply.code(200).send();
     } catch (err) {
       await trx.rollback();
       throw err;

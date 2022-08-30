@@ -11,15 +11,15 @@ const start = async () => {
   try {
     let app = fastify({ logger: false });
 
-    
-    //app.addHook("onRequest", checkAuthentication);
     app.register(swagger,{ //registered swagger to automate the api endpoint docs;
       exposeRoute: true,
-      routePrefix: '/cart',
+      routePrefix: '/cartdoc',
       swagger:{
         info:{title:"fastify-users-api"}
       }
     })
+    app.addHook("onRequest", checkAuthentication);
+    
     app.register(cartRoutes);
     app.decorate('knex',db);
     await app.listen({ port });
